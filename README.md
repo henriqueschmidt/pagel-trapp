@@ -12,3 +12,4 @@ and for the client ```npm start```inside the client folder
 
 this way will use a proxy
 
+after run the database scrip it will create an user with developer permissions (all permissions) with email "admin@admin.com" and password "xuxu";
