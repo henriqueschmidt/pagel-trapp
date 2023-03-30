@@ -1,0 +1,21 @@
+<app-tasks-crud
+    *ngIf="custom_params.length == 0"
+    link="/tarefas"
+    title="Tarefas"
+    [columns]="columns"
+    [crudContext]="crudContext"
+    [manageComponent]="manageComponent"
+    [displayNew]="permissionService.hasPermissao('tarefas.create')"
+    [displayCustomFilters]="true"
+></app-tasks-crud>
+<app-tasks-crud
+    *ngIf="custom_params.length > 0"
+    link="/tarefas"
+    title="Tarefas"
+    [columns]="columns"
+    [crudContext]="crudContext"
+    [manageComponent]="manageComponent"
+    [displayNew]="false"
+    [displayCustomFilters]="false"
+    [customParams]="custom_params"
+></app-tasks-crud>

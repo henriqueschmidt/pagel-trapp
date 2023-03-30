@@ -1,0 +1,56 @@
+<form [formGroup]="userForm" (ngSubmit)="save()" *ngIf="!isLoading">
+
+    <mat-form-field appearance="outline">
+        <mat-label>
+            Nome:
+        </mat-label>
+        <input id="valorDe" matInput formControlName="name" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>
+            Email:
+        </mat-label>
+        <input id="email" matInput formControlName="email" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="senha">
+        <mat-label>
+            Senha:
+        </mat-label>
+        <input type="password" id="password" matInput formControlName="password">
+        <mat-hint> Deixar em branco para não alterar</mat-hint>
+    </mat-form-field>
+
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Perfil:
+            </mat-label>
+            <input id="perfil" matInput formControlName="perfil">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Setor:
+            </mat-label>
+            <input id="setor" matInput formControlName="setor">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Filial:
+            </mat-label>
+            <input id="filial" matInput formControlName="filial">
+        </mat-form-field>
+    </div>
+
+    <div class="actions">
+
+        <button mat-raised-button type="submit" color="primary" [disabled]="userForm.invalid || saving">
+            Salvar
+            <div *ngIf="saving" class="spinner-loading"></div>
+        </button>
+    </div>
+
+</form>

@@ -1,0 +1,20 @@
+<div class="crud">
+    <div class="header-actions">
+        <button mat-raised-button color="primary" *ngIf="displayNew" (click)="openDialog('new', page)" routerLink="/{{ link }}/novo"> {{ 'Adicionar' }} </button>
+        <mat-form-field appearance="fill" style="margin-bottom: -22px">
+            <mat-label> <mat-icon> search </mat-icon> Procurar </mat-label>
+            <input matInput [(ngModel)]="filter" placeholder="Ex. GetNet">
+        </mat-form-field>
+    </div>
+
+    <app-table
+        *ngIf="table_config"
+        [config]="table_config"
+        [search]="filter"
+        [isArchived]="isArchived"
+        [displayCustomFilters]="displayCustomFilters"
+        [crudContext]="crudContext"
+        [customParams]="customParams"
+    ></app-table>
+
+</div>

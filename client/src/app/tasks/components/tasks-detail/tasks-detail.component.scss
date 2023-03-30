@@ -1,0 +1,42 @@
+.filial-input {
+    min-width: 240px;
+}
+
+.entrega {
+    max-width: 170px;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+mat-divider {
+    margin-bottom: 2rem;
+}
+
+.executamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .size {
+        width: calc(calc(100% - 170px)/6);
+    }
+    .size-2 {
+        width: calc(calc(100% - 170px)/6*2);
+    }
+
+    .delete {
+        color: red;
+    }
+}
+
+.no-bottom {
+    margin-bottom: -0.75em !important;
+}
+
+.add-execucao {
+    margin-bottom: 1.5rem;
+}

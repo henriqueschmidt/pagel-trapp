@@ -1,0 +1,41 @@
+<div class="filial-detail my-form">
+
+    <header>
+        <h3>
+            <strong *ngIf="settingsData.action === 'new'"> Adicionar </strong>
+            <strong *ngIf="settingsData.action === 'edit'"> Editar </strong>
+            <strong *ngIf="settingsData.action === 'view'"> Ver </strong>
+        </h3>
+        <button mat-raised-button color="accent" mat-dialog-close [disabled]="saving">
+            Fechar
+        </button>
+    </header>
+
+    <div class="loading" *ngIf="isLoading">
+        Carregando...
+        <div class="spinner-loading"></div>
+    </div>
+
+    <form [formGroup]="setorForm" (ngSubmit)="save()" *ngIf="!isLoading">
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Nome:
+            </mat-label>
+            <input id="valorDe" matInput formControlName="nome" [attr.disabled]="settingsData.action === 'view'" required>
+        </mat-form-field>
+
+        <div class="actions">
+            <button mat-raised-button type="button" color="accent" mat-dialog-close [disabled]="saving">
+                Fechar
+            </button>
+
+            <button mat-raised-button type="submit" color="primary" [disabled]="setorForm.invalid || saving" *ngIf="settingsData.action !== 'view'">
+                Salvar
+                <div *ngIf="saving" class="spinner-loading"></div>
+            </button>
+        </div>
+
+    </form>
+
+</div>

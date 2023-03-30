@@ -1,0 +1,276 @@
+<div class="relatorio" *ngIf="!isLoading">
+
+    <mat-form-field appearance="outline" class="filial no-bottom atividade">
+        <mat-label> Relatório </mat-label>
+        <mat-select [(ngModel)]="relatorio" (ngModelChange)="onRelatorioChange($event)">
+            <mat-option *ngFor="let op of relatorios" [value]="op.sistema"> {{ op.nome }} </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="relatorio">
+        <mat-label> Período </mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+            <input [(ngModel)]="data_inicial" matStartDate placeholder="Data inicial">
+            <input [(ngModel)]="data_final" matEndDate placeholder="Data final">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filial no-bottom atividade" *ngIf="relatorio && relatorio != 'filial'">
+        <mat-label> Equipe  </mat-label>
+        <mat-select [(ngModel)]="equipe" multiple="true">
+            <mat-option *ngFor="let op of usuarios" [value]="op.id"> <small> {{ op.nome }} </small> </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filial no-bottom atividade" *ngIf="relatorio && relatorio == 'filial'">
+        <mat-label> Filial </mat-label>
+        <mat-select [(ngModel)]="filial" multiple="true">
+            <mat-option *ngFor="let op of filiais" [value]="op.id"> <small> {{ op.nome }} </small> </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filial no-bottom atividade" *ngIf="relatorio">
+        <mat-label> Tipo Atividade  </mat-label>
+        <mat-select [(ngModel)]="atividade" multiple="true">
+            <mat-option *ngFor="let op of atividades" [value]="op.id"> <small> {{ op.nome }} </small> </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div class="actions" *ngIf="relatorio">
+
+        <button mat-raised-button type="submit" color="primary" (click)="generatePreview()" [disabled]="saving">
+            Gerar relatório
+            <div *ngIf="saving" class="spinner-loading"></div>
+        </button>
+
+        <button mat-raised-button *ngIf="data" type="submit" color="accent" (click)="generatePdf()" [disabled]="saving">
+            Salvar
+            <div *ngIf="saving" class="spinner-loading"></div>
+        </button>
+    </div>
+
+</div>
+
+
+
+<div class="relatorio-data" id="relatorio-data" #relatorioData *ngIf="data">
+
+    <div class="counts">
+        <mat-card>
+            <mat-card-title> Tarefas criadas </mat-card-title>
+            <mat-card-content> {{ data.count.criadas }} </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-title> Tarefas em andamento </mat-card-title>
+            <mat-card-content> {{ data.count.em_aberto }} </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-title> Tarefas concluídas </mat-card-title>
+            <mat-card-content> {{ data.count.concluidas }} </mat-card-content>
+        </mat-card>
+    </div>
+
+    <section class="table-container mat-elevation-z8" tabindex="0" *ngIf="relatorio == 'filial'">
+        <table mat-table [dataSource]="table_data">
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="nome">
+                <th mat-header-cell *matHeaderCellDef> Tipo atividade </th>
+                <td mat-cell *matCellDef="let element">
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, atividade_name: element.nome }]" target="_blank">
+                        {{element.nome}}
+                    </a>
+                </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Total </th>
+                <td mat-cell *matCellDef="let element"> {{element.total ?? 0}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="novas">
+                <th mat-header-cell *matHeaderCellDef> Novas </th>
+                <td mat-cell *matCellDef="let element"> {{element.novas ?? 0}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="em_aberto">
+                <th mat-header-cell *matHeaderCellDef> Em aberto </th>
+                <td mat-cell *matCellDef="let element"> {{element.em_aberto ?? 0}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="concluidas">
+                <th mat-header-cell *matHeaderCellDef> Concluidas </th>
+                <td mat-cell *matCellDef="let element"> {{element.concluidas ?? 0}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef=" ['nome', 'total', 'novas', 'em_aberto', 'concluidas']; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['nome', 'total', 'novas', 'em_aberto', 'concluidas'];"></tr>
+        </table>
+    </section>
+
+    <section class="table-container mat-elevation-z8" tabindex="0" *ngIf="relatorio == 'setor'">
+        <table mat-table [dataSource]="table_data">
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="nome">
+                <th mat-header-cell *matHeaderCellDef> Setor </th>
+                <td mat-cell *matCellDef="let element">
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, setor: element.nome }]" target="_blank" > {{element.nome}} </a>
+                </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Total </th>
+                <td mat-cell *matCellDef="let element"> {{element.total ?? 0}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="novas">
+                <th mat-header-cell *matHeaderCellDef> Novas </th>
+                <td mat-cell *matCellDef="let element"> {{element.novas ?? 0}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="em_aberto">
+                <th mat-header-cell *matHeaderCellDef> Em aberto </th>
+                <td mat-cell *matCellDef="let element"> {{element.em_aberto ?? 0}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="concluidas">
+                <th mat-header-cell *matHeaderCellDef> Concluidas </th>
+                <td mat-cell *matCellDef="let element"> {{element.concluidas ?? 0}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef=" ['nome', 'total', 'novas', 'em_aberto', 'concluidas']; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['nome', 'total', 'novas', 'em_aberto', 'concluidas'];"></tr>
+        </table>
+    </section>
+
+    <section class="table-container mat-elevation-z8" tabindex="0" *ngIf="relatorio == 'executante'">
+        <table mat-table [dataSource]="table_data">
+
+            <ng-container matColumnDef="user_name">
+                <th mat-header-cell *matHeaderCellDef> Usuário </th>
+                <td mat-cell *matCellDef="let element"> {{element.user_name}} </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="atividade">
+                <th mat-header-cell *matHeaderCellDef> Tipo atividade </th>
+                <td mat-cell *matCellDef="let element"> {{element.atividade}} </td>
+            </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let element">
+                <a [routerLink]="['/tarefas', { relatorio_id: data.id, todas: true, atividade_name: element.atividade, executante: element.user_name_display }]" target="_blank">
+                    {{element.total ?? 0}}
+                </a>
+            </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="novas">
+            <th mat-header-cell *matHeaderCellDef> Novas </th>
+            <td mat-cell *matCellDef="let element">
+                <a [routerLink]="['/tarefas', { relatorio_id: data.id, novas: true, atividade_name: element.atividade, executante: element.user_name_display }]" target="_blank">
+                    {{element.novas ?? 0}}
+                </a> 
+            </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="em_aberto">
+            <th mat-header-cell *matHeaderCellDef> Em aberto </th>
+            <td mat-cell *matCellDef="let element"> 
+                <a [routerLink]="['/tarefas', { relatorio_id: data.id, em_andamento: true, atividade_name: element.atividade, executante: element.user_name_display }]" target="_blank">
+                    {{element.em_aberto ?? 0}}
+                </a>
+            </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="concluidas">
+            <th mat-header-cell *matHeaderCellDef> Concluidas </th>
+            <td mat-cell *matCellDef="let element"> 
+                <a [routerLink]="['/tarefas', { relatorio_id: data.id, concluidas: true, atividade_name: element.atividade, executante: element.user_name_display }]" target="_blank">
+                    {{element.concluidas ?? 0}}
+                </a>
+            </td>
+        </ng-container>
+            <tr mat-header-row *matHeaderRowDef=" [ 'user_name', 'atividade', 'total', 'novas', 'em_aberto', 'concluidas']; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['user_name', 'atividade', 'total', 'novas', 'em_aberto', 'concluidas'];"></tr>
+        </table>
+    </section>
+
+    <section class="table-container mat-elevation-z8" tabindex="0" *ngIf="relatorio == 'coordenadora'">
+        <table mat-table [dataSource]="table_data">
+
+            <ng-container matColumnDef="user_name">
+                <th mat-header-cell *matHeaderCellDef> Usuário </th>
+                <td mat-cell *matCellDef="let element"> {{element.user_name}} </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="atividade">
+                <th mat-header-cell *matHeaderCellDef> Tipo atividade </th>
+                <td mat-cell *matCellDef="let element">
+                    {{element.atividade}}
+                </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Total </th>
+                <td mat-cell *matCellDef="let element">
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, todas: true, atividade_name: element.atividade, coordenadora: element.user_name_display }]" target="_blank">
+                        {{element.total ?? 0}}
+                    </a>
+                </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="novas">
+                <th mat-header-cell *matHeaderCellDef> Novas </th>
+                <td mat-cell *matCellDef="let element">
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, novas: true, atividade_name: element.atividade, coordenadora: element.user_name_display }]" target="_blank">
+                        {{element.novas ?? 0}}
+                    </a> 
+                </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="em_aberto">
+                <th mat-header-cell *matHeaderCellDef> Em aberto </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, em_andamento: true, atividade_name: element.atividade, coordenadora: element.user_name_display }]" target="_blank">
+                        {{element.em_aberto ?? 0}}
+                    </a>
+                </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="concluidas">
+                <th mat-header-cell *matHeaderCellDef> Concluidas </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <a [routerLink]="['/tarefas', { relatorio_id: data.id, concluidas: true, atividade_name: element.atividade, coordenadora: element.user_name_display }]" target="_blank">
+                        {{element.concluidas ?? 0}}
+                    </a>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef=" [ 'user_name', 'atividade', 'total', 'novas', 'em_aberto', 'concluidas']; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['user_name', 'atividade', 'total', 'novas', 'em_aberto', 'concluidas'];"></tr>
+        </table>
+    </section>
+
+</div>

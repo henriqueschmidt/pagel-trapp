@@ -1,0 +1,174 @@
+<div class="filial-detail my-form">
+
+    <header>
+        <h3>
+            <strong *ngIf="settingsData.action === 'new'"> Adicionar </strong>
+            <strong *ngIf="settingsData.action === 'edit'"> Editar </strong>
+            <strong *ngIf="settingsData.action === 'view'"> Ver </strong>
+        </h3>
+        <button mat-raised-button color="accent" mat-dialog-close [disabled]="saving">
+            Fechar
+        </button>
+    </header>
+
+    <div class="loading" *ngIf="isLoading">
+        Carregando...
+        <div class="spinner-loading"></div>
+    </div>
+
+    <form [formGroup]="tarefaForm" (ngSubmit)="save()" *ngIf="!isLoading">
+
+
+        <mat-form-field appearance="outline" class="filial-input no-bottom">
+            <mat-label> Atividade  </mat-label>
+            <mat-select formControlName="atividade_id" required>
+                <mat-option *ngFor="let op of atividades" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="no-bottom">
+            <mat-label>
+                Numero processo:
+            </mat-label>
+            <input id="processo_numero" maxlength="40" max="40" matInput formControlName="processo_numero" [attr.disabled]="settingsData.action === 'view'">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="no-bottom">
+            <mat-label>
+                Nome cliente:
+            </mat-label>
+            <input id="valorDe" matInput formControlName="nome" [attr.disabled]="settingsData.action === 'view'" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filial-input no-bottom">
+            <mat-label> Coordenadora  </mat-label>
+            <mat-select formControlName="responsavel_user_id" required>
+                <mat-option *ngFor="let op of coordenadoras" [value]="op.id"> {{ op.name }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="entrega no-bottom">
+            <mat-label> Prazo ED </mat-label>
+            <input matInput [matDatepicker]="picker"  formControlName="entrega_dt">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="no-bottom">
+            <mat-label> Descrição </mat-label>
+            <textarea matInput formControlName="descricao" placeholder="Tarefa para ...." required></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="entrega no-bottom">
+            <mat-label> Prazo fatal </mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="limite_dt" required>
+            <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filial-input size no-bottom">
+            <mat-label> Status </mat-label>
+            <mat-select formControlName="tarefa_status_id" required>
+                <mat-option *ngFor="let op of status" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="no-bottom">
+            <mat-label> Observações </mat-label>
+            <textarea matInput formControlName="descricao_execucao" placeholder="Tarefa para ...."></textarea>
+        </mat-form-field>
+
+        <div class="row">
+            <mat-form-field appearance="outline" class="filial-input no-bottom" *ngIf="settingsData.action !== 'new'">
+                <mat-label> Solicitado por </mat-label>
+                <mat-select formControlName="solicitante_id" required>
+                    <mat-option *ngFor="let op of users" [value]="op.id"> {{ op.name }} </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="entrega no-bottom" *ngIf="settingsData.action !== 'new'">
+                <mat-label> Solicitado em </mat-label>
+                <input matInput [matDatepicker]="picker"  formControlName="solicitado_em">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="no-bottom" *ngIf="settingsData.action !== 'new'">
+                <mat-label> Filial </mat-label>
+                <input matInput formControlName="filial">
+            </mat-form-field>
+        </div>
+
+        <button
+            class="add-execucao"
+            type="button"
+            *ngIf="can_edit_executamentos && !permissionService.hasPerfil('secretaria')"
+            (click)="addExecutamento()"
+            mat-mini-fab
+            color="primary"
+            aria-label="Example icon button with a menu icon">
+            <mat-icon>add</mat-icon>
+        </button>
+
+        <div class="executamentos">
+
+            <div class="executamento" *ngFor="let executamento of tarefaForm.controls.executamentos.controls; index as i">
+                <ng-container [formGroup]="executamento">
+                    <mat-form-field appearance="outline" class="no-bottom size">
+                        <mat-label>
+                            Descrição da tarefa:
+                        </mat-label>
+                        <input matInput formControlName="nome" [attr.disabled]="settingsData.action === 'view'" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="filial-input size no-bottom">
+                        <mat-label> Executante  </mat-label>
+                        <mat-select formControlName="executante_id" required>
+                            <mat-option *ngFor="let op of colaboradoras" [value]="op.id"> {{ op.name }} </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="filial-input size no-bottom">
+                        <mat-label> Status </mat-label>
+                        <mat-select formControlName="status_id" required>
+                            <mat-option *ngFor="let op of status" [value]="op.id"> {{ op.nome }} </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="entrega no-bottom">
+                        <mat-label> Data limite </mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="limite_dt">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="no-bottom size-2">
+                        <mat-label> Observações </mat-label>
+                        <textarea formControlName="descricao" matInput placeholder="" rows="1" ></textarea>
+                    </mat-form-field>
+
+                    <button type="button" *ngIf="settingsData.action !== 'view' && permissionService.hasPerfil(['dev', 'admin', 'diretoria', 'coordenadora'])" (click)="removeExecutamento(i)" class="delete" mat-icon-button aria-label="Remover">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </ng-container>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button mat-raised-button type="button" color="accent" mat-dialog-close [disabled]="saving">
+                Fechar
+            </button>
+            <button mat-raised-button type="submit" color="primary" [disabled]="tarefaForm.invalid || saving" *ngIf="settingsData.action !== 'view'">
+                Salvar
+                <div *ngIf="saving" class="spinner-loading"></div>
+            </button>
+            <button mat-raised-button type="button" (click)="encerrar()" color="primary" [disabled]="tarefaForm.invalid || saving" *ngIf="settingsData.action === 'edit' && permissionService.hasPerfil(['dev', 'admin', 'diretoria', 'coordenadora'])">
+                Concluir
+                <div *ngIf="saving" class="spinner-loading"></div>
+            </button>
+        </div>
+
+    </form>
+
+</div>

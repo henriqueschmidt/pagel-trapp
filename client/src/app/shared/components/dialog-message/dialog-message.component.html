@@ -1,0 +1,41 @@
+<div class="dialog">
+    <div class="icon">
+        <mat-icon *ngIf="data.type === 'error'" color="warn">highlight_off</mat-icon>
+        <mat-icon *ngIf="data.type === 'warning'" color="accent">warning</mat-icon>
+        <mat-icon *ngIf="data.type === 'info'" color="primary">info</mat-icon>
+        <mat-icon *ngIf="data.type === 'success'" color="success-color">check_circle_outline</mat-icon>
+    </div>
+
+    <h1 mat-dialog-title>{{ data.title }}</h1>
+    <div mat-dialog-content>
+        <p [innerHTML]="data.message "></p>
+    </div>
+    <div mat-dialog-actions>
+        <button
+            color="warn"
+            *ngFor="let btn of data.rejected_buttons"
+            mat-button
+            id="reject-{{ btn }}"
+            [mat-dialog-close]="btn">
+            {{ btn }}
+        </button>
+        <button
+            color="warn"
+            *ngFor="let btn of data.resolve_buttons"
+            mat-raised-button
+            id="resolve-{{ btn }}"
+            [mat-dialog-close]="btn">
+            {{ btn }}
+        </button>
+        <button
+            *ngIf="
+                data?.resolve_buttons?.length === 0 &&
+                data?.rejected_buttons?.length === 0
+            "
+            mat-button
+            id="success-ok"
+            [mat-dialog-close]="'ok'">
+            {{ 'Ok' }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<header>
+
+    <div class="menu">
+        <a *ngFor="let item of menu" [routerLink]="item.path" >
+            <button mat-button mat-raised-button color="primary"> {{ item.name }} </button>
+        </a>
+    </div>
+    <div class="profile" *ngIf="isLogged">
+        <button *ngIf="user" mat-button [matMenuTriggerFor]="userMenu" aria-label="User" class="user-menu">
+            {{ user }}
+        </button>
+
+        <button mat-icon-button *ngIf="!user" [matMenuTriggerFor]="userMenu" aria-label="User" class="user-menu">
+            <mat-icon >more_vert</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+            <button mat-menu-item [routerLink]="'/perfil'">
+                <mat-icon>person</mat-icon>
+                <span> Conta </span>
+            </button>
+            <button mat-menu-item [routerLink]="'/login'">
+                <mat-icon>logout</mat-icon>
+                <span>Sair</span>
+            </button>
+        </mat-menu>
+    </div>
+</header>

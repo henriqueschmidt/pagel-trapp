@@ -1,0 +1,56 @@
+.relatorio {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: auto;
+
+    .row {
+        display: flex;
+        width: 100%;
+    }
+
+    mat-form-field {
+        margin-bottom: -10px;
+    }
+}
+
+a {
+    text-decoration: inherit; /* no underline */
+}
+
+.relatorio-data {
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: auto;
+
+    .counts {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-evenly;
+        gap: 0.5rem;
+
+        mat-card {
+            padding: 1rem;
+        }
+
+        mat-card-content {
+            margin-top: 1rem;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+    }
+
+    .table-container {
+        margin-top: 1rem;
+        max-height: 400px;
+        overflow: auto;
+    }
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+}

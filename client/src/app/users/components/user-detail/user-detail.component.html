@@ -1,0 +1,84 @@
+<div class="user-detail my-form">
+
+    <header>
+        <h3>
+            <strong *ngIf="settingsData.action === 'new'"> Adicionar </strong>
+            <strong *ngIf="settingsData.action === 'edit'"> Editar </strong>
+            <strong *ngIf="settingsData.action === 'view'"> Ver </strong>
+        </h3>
+        <button mat-raised-button color="accent" mat-dialog-close [disabled]="saving">
+            Fechar
+        </button>
+    </header>
+
+    <div class="loading" *ngIf="isLoading">
+        Carregando...
+        <div class="spinner-loading"></div>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="save()" *ngIf="!isLoading">
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Nome:
+            </mat-label>
+            <input id="valorDe" matInput formControlName="name" [attr.disabled]="settingsData.action === 'view'" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Email:
+            </mat-label>
+            <input id="email" matInput formControlName="email" [attr.disabled]="settingsData.action === 'view'" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label> Selecione um perfil </mat-label>
+            <mat-select formControlName="perfil_id" required>
+                <mat-option *ngFor="let op of perfis" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label> Selecione uma filial </mat-label>
+            <mat-select formControlName="filial_id" required>
+                <mat-option *ngFor="let op of filiais" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label> Selecione uma coordenadora </mat-label>
+            <mat-select formControlName="coordenadora_id" required>
+                <mat-option *ngFor="let op of coordenadoras" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label> Selecione um setor </mat-label>
+            <mat-select formControlName="setor_id" required>
+                <mat-option *ngFor="let op of setores" [value]="op.id"> {{ op.nome }} </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="senha">
+            <mat-label>
+                Senha:
+            </mat-label>
+            <input type="password" id="password" matInput formControlName="password">
+            <mat-hint> Deixar em branco para não alterar</mat-hint>
+        </mat-form-field>
+
+        <div class="actions">
+            <button mat-raised-button type="button" color="accent" mat-dialog-close [disabled]="saving">
+                Fechar
+            </button>
+
+            <button mat-raised-button type="submit" color="primary" [disabled]="userForm.invalid || saving" *ngIf="settingsData.action !== 'view'">
+                Salvar
+                <div *ngIf="saving" class="spinner-loading"></div>
+            </button>
+        </div>
+
+    </form>
+
+</div>

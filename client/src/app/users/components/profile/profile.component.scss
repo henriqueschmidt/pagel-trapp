@@ -1,0 +1,22 @@
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: auto;
+
+    .row {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .senha {
+        margin-bottom: 1rem;
+    }
+
+    mat-hint {
+        color: #8f8f8f;
+        font-style: italic;
+    }
+
+}
